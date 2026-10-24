@@ -8,6 +8,8 @@ A community-oriented **ChatGPT / AI Skill** that safely guides individuals throu
 
 > **Unofficial; not affiliated with FBR. Not legal or tax advice.** Tax rules, menu labels and forms change. Verify the applicable tax-year law and confirm uncertain cases with a Pakistani tax professional.
 
+📦 **Latest release:** [v1.1.0](https://github.com/mudasar8k/pakistan-fbr-iris-filing-tax-return/releases/latest) — download the installable [`skill.zip`](https://github.com/mudasar8k/pakistan-fbr-iris-filing-tax-return/releases/download/v1.1.0/skill.zip).
+
 ## What it does
 
 - Walks users through IRIS screenshots **one step at a time**.
@@ -76,7 +78,11 @@ A community-oriented **ChatGPT / AI Skill** that safely guides individuals throu
 
 This skill follows the `SKILL.md` + frontmatter format.
 
-1. Download this repository (or clone it):
+**Option A — download the release package:** grab [`skill.zip`](https://github.com/mudasar8k/pakistan-fbr-iris-filing-tax-return/releases/latest) from the latest release and unzip it (`SKILL.md` sits at the top level).
+
+**Option B — clone the repository:**
+
+1. Clone it:
    ```bash
    git clone https://github.com/mudasar8k/pakistan-fbr-iris-filing-tax-return.git
    ```
