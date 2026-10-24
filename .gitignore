@@ -14,10 +14,6 @@ screenshots/
 exports/
 private/
 secrets/
-*cpr*
-*psid*
-*cnic*
-*ntn*
 
 # Local / editor / OS
 .DS_Store
