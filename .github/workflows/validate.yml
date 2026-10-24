@@ -1,0 +1,97 @@
+name: Validate
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Validate SKILL.md YAML frontmatter
+        run: |
+          python3 - <<'PY'
+          import sys, re
+          p = "SKILL.md"
+          text = open(p, encoding="utf-8").read()
+          m = re.match(r"^---\n(.*?)\n---\n", text, re.S)
+          if not m:
+              sys.exit("ERROR: SKILL.md missing YAML frontmatter block")
+          fm = m.group(1)
+          # Minimal key presence check (no external deps)
+          for key in ("name", "description", "version"):
+              if not re.search(rf"^{key}\s*:", fm, re.M):
+                  sys.exit(f"ERROR: frontmatter missing required key: {key}")
+          name = re.search(r"^name\s*:\s*(.+)$", fm, re.M).group(1).strip()
+          if not re.fullmatch(r"[a-z0-9-]+", name):
+              sys.exit(f"ERROR: name must be kebab-case lowercase: {name!r}")
+          print("OK: SKILL.md frontmatter valid (name=%s)" % name)
+          PY
+
+      - name: Check internal Markdown links
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          broken = []
+          md_files = []
+          for root, _, files in os.walk("."):
+              if "/." in root or root.startswith("./.git"):
+                  continue
+              for f in files:
+                  if f.endswith(".md"):
+                      md_files.append(os.path.join(root, f))
+          link_re = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+          for md in md_files:
+              base = os.path.dirname(md)
+              text = open(md, encoding="utf-8").read()
+              for target in link_re.findall(text):
+                  t = target.strip()
+                  if t.startswith(("http://", "https://", "#", "mailto:")):
+                      continue
+                  path = t.split("#")[0]
+                  if not path:
+                      continue
+                  resolved = os.path.normpath(os.path.join(base, path))
+                  if not os.path.exists(resolved):
+                      broken.append(f"{md} -> {target}")
+          if broken:
+              print("ERROR: broken internal links:")
+              print("\n".join(broken))
+              sys.exit(1)
+          print("OK: %d markdown files, no broken internal links" % len(md_files))
+          PY
+
+      - name: Basic privacy / secret scan
+        run: |
+          python3 - <<'PY'
+          import os, re, sys
+          # Heuristic patterns for obvious PII/secrets in TRACKED text files.
+          patterns = {
+              "13-digit CNIC":      re.compile(r"\b\d{5}-\d{7}-\d\b"),
+              "IBAN (PK)":          re.compile(r"\bPK\d{2}[A-Z]{4}\d{16}\b"),
+              "private key header":  re.compile(r"BEGIN (?:RSA |EC |OPENSSH )?PRIVATE KEY"),
+          }
+          hits = []
+          for root, _, files in os.walk("."):
+              if root.startswith("./.git"):
+                  continue
+              for f in files:
+                  if not f.endswith((".md", ".yaml", ".yml", ".txt")):
+                      continue
+                  fp = os.path.join(root, f)
+                  try:
+                      text = open(fp, encoding="utf-8").read()
+                  except Exception:
+                      continue
+                  for name, rx in patterns.items():
+                      if rx.search(text):
+                          hits.append(f"{fp}: possible {name}")
+          if hits:
+              print("ERROR: possible sensitive data found:")
+              print("\n".join(hits))
+              sys.exit(1)
+          print("OK: no obvious PII/secret patterns in tracked text files")
+          PY

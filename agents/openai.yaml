@@ -2,3 +2,12 @@ interface:
   display_name: "Pakistan FBR IRIS Filing"
   short_description: "Guide Pakistani income tax returns, wealth statements, and CPR checks"
   default_prompt: "Help me file my Pakistan FBR IRIS income tax return, reviewing documents and screenshots one step at a time."
+  version: "1.1.0"
+  tags:
+    - pakistan
+    - fbr
+    - iris
+    - income-tax
+    - wealth-statement
+    - tax-filing
+  disclaimer: "Unofficial; not affiliated with FBR. Not legal or tax advice. Verify year-specific rules with a professional."

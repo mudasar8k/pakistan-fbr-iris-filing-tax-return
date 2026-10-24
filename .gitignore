@@ -1,0 +1,40 @@
+# Sensitive taxpayer data — NEVER commit
+*.pdf
+*.csv
+*.xlsx
+*.xls
+*.png
+*.jpg
+*.jpeg
+*.gif
+*.zip
+statements/
+receipts/
+screenshots/
+exports/
+private/
+secrets/
+*cpr*
+*psid*
+*cnic*
+*ntn*
+
+# Local / editor / OS
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+*.log
+*.tmp
+*.bak
+*.swp
+
+# Env / secrets
+.env
+.env.*
+*.key
+*.pem
+
+# Allow the fictional-examples reference to remain tracked (contains no real data)
+!references/worked-examples.md
